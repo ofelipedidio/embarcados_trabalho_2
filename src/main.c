@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include <math.h>
 
 #include "vec2d.h"
 
@@ -24,6 +25,50 @@ typedef enum {
     entity_monster,
     entity_bullet,
 } entity_type_t;
+
+typedef struct {
+    entity_type_t type[MAX_COUNT];
+
+    /* Life */
+    int alive[MAX_COUNT];
+    uint64_t time_to_live[MAX_COUNT];
+    uint64_t time_to_reset[MAX_COUNT];
+
+    /* Position and movement */
+    vec2d_t posision[MAX_COUNT];
+    vec2d_t target[MAX_COUNT];
+    double speed[MAX_COUNT];
+    double radius[MAX_COUNT];
+
+    /* Monster shooting */
+    uint64_t time_to_shoot[MAX_COUNT];
+    uint64_t time_between_shots[MAX_COUNT];
+} entities_t;
+
+typedef struct {
+    /* Life */
+    int alive;
+    uint64_t time_to_live;
+    uint64_t time_to_reset;
+
+    /* Position and movement */
+    vec2d_t posision;
+    vec2d_t target;
+    double speed;
+    double radius;
+
+    /* Monster shooting */
+    uint64_t time_to_shoot;
+    uint64_t time_between_shots;
+} monster_t;
+
+typedef struct {
+    uint64_t time_to_live;
+    vec2d_t posision;
+    vec2d_t target;
+    double speed;
+    double radius;
+} bullet_t;
 
 typedef struct {
     entity_type_t type;
@@ -73,9 +118,8 @@ void create_bullet(vec2d_t position, vec2d_t target) {
 }
 
 void update_entity(entity_t *entity) {
-    entity->time_to_reset--;
-
     if (!entity->alive) {
+        entity->time_to_reset--;
         if (entity->time_to_reset == 0) {
             entity->alive = 1;
         }
@@ -92,6 +136,7 @@ void update_entity(entity_t *entity) {
                 vec2d_sub(entity->target, entity->posision)),
             entity->speed);
     entity->posision = vec2d_add(entity->posision, velocity_vector);
+
     // Make sure bullet is always following its path
     if (entity->type == entity_bullet) {
         entity->target = vec2d_add(entity->target, velocity_vector);
@@ -119,10 +164,55 @@ void update_entity(entity_t *entity) {
     }
 }
 
+#define array_of_structs 1
+#if array_of_structs
+#define get_prop(i, prop) engine.entities[i].prop
+#else
+#define get_prop(i, prop) engine.entities.prop[i]
+#endif
+
 void update() {
+    /*
+     *
+     *            ┌───────────────────────────────────────┐
+     *            v                             {ttl > 0} │
+     *  ┌──────────────────┐                              │             ┌───────────────────┐
+     *  │ alive = 1        ├──────────────────────────────┴────────────>│ alive = 0         │
+     *  │ time_to_live > 0 │ on tick: time_to_live--        {ttl == 0}  │ time_to_live = 0  │
+     *  └──────────────────┘                                            │ time_to_reset > 0 │
+     *                                                                  └───────────────────┘
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+
     for (size_t i = 0; i < engine.count; i++) {
-        update_entity(&engine.monsters[i]);
-        
+        // Handle entity life
+        if (get_prop(i, alive)) {
+            if (get_prop(i, time_to_live) == 0) {
+                get_prop(i, alive) = 0;
+            }
+        }
+        if (get_prop(i, alive)) {
+            get_prop(i, time_to_live)--;
+        } else {
+            if (get_prop(i, type) == entity_monster) {
+                if (get_prop(i, time_to_reset) == 0) {
+                    get_prop(i, alive) = 1;
+                } else {
+                    get_prop(i, time_to_reset)--;
+                }
+            }
+        }
     }
 }
 
@@ -133,7 +223,9 @@ void run_game() {
 }
 
 int main() {
+    fprintf(stderr, "%lu", sizeof(entity_t));
     init_engine();
     run_game();
     return 0;
 }
+
