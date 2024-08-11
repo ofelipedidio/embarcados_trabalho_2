@@ -78,6 +78,7 @@ void handle_movement() {
 
 void handle_bullet_collision() {
     // fprintf(stderr, "handle_bullet_collision()\n");
+    /*
     for (size_t i = 0; i < engine.count; i++) {
         if (get_prop(i, type) == entity_bullet) {
             for (size_t j = 0; j < engine.count; j++) {
@@ -100,6 +101,7 @@ void handle_bullet_collision() {
             }
         }
     }
+    */
 }
 
 void handle_shooting() {

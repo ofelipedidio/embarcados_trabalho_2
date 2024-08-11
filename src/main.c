@@ -36,7 +36,7 @@ int main() {
                     ((double) randwithin(0, 100)) - 50.0,
                     ((double) randwithin(0, 100)) - 50.0)),
                 (double) randwithin(2, 6),
-                randwithin(10, 10));
+                randwithin(3, 25));
     }
 
     engine_run();
