@@ -24,4 +24,3 @@ vec2d_t vec2d_div_scl(vec2d_t vec0, double scalar);
 vec2d_t vec2d_norm(vec2d_t vec);
 
 double vec2d_len(vec2d_t vec);
-

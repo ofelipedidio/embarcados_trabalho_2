@@ -115,7 +115,7 @@ void create_bullet(vec2d_t position, vec2d_t target) {
     engine.entities[engine.count].time_between_shots = 0;
 }
 
-void update_entity(entity_t *entity) {
+void update_entity(entity_t* entity) {
     if (!entity->alive) {
         entity->time_to_reset--;
         if (entity->time_to_reset == 0) {
@@ -129,10 +129,8 @@ void update_entity(entity_t *entity) {
     }
     entity->time_to_live--;
 
-    vec2d_t velocity_vector = vec2d_mul_scl(
-            vec2d_norm(
-                vec2d_sub(entity->target, entity->posision)),
-            entity->speed);
+    vec2d_t velocity_vector =
+        vec2d_mul_scl(vec2d_norm(vec2d_sub(entity->target, entity->posision)), entity->speed);
     entity->posision = vec2d_add(entity->posision, velocity_vector);
 
     // Make sure bullet is always following its path
@@ -150,7 +148,7 @@ void update_entity(entity_t *entity) {
 
     if (entity->type == entity_bullet) {
         for (size_t j = 0; j < engine.count; j++) {
-            entity_t *other = &engine.entities[j];
+            entity_t* other = &engine.entities[j];
             if (other->type == entity_monster && other->alive) {
                 double distance = vec2d_len(vec2d_sub(entity->posision, other->posision));
                 if (distance <= (entity->radius + other->radius)) {
@@ -164,9 +162,9 @@ void update_entity(entity_t *entity) {
 
 #define array_of_structs 1
 #if array_of_structs
-#define get_prop(i, prop) engine.entities[i].prop
+    #define get_prop(i, prop) engine.entities[i].prop
 #else
-#define get_prop(i, prop) engine.entities.prop[i]
+    #define get_prop(i, prop) engine.entities.prop[i]
 #endif
 
 void update() {
@@ -226,4 +224,3 @@ int main() {
     run_game();
     return 0;
 }
-

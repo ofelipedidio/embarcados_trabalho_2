@@ -2,7 +2,10 @@
 #include <math.h>
 
 vec2d_t vec2d_new(double x, double y) {
-    return (vec2d_t) { .x = x, .y = y, };
+    return (vec2d_t) {
+        .x = x,
+        .y = y,
+    };
 }
 
 vec2d_t vec2d_add(vec2d_t vec0, vec2d_t vec1) {
@@ -62,7 +65,7 @@ vec2d_t vec2d_div_scl(vec2d_t vec0, double scalar) {
 }
 
 vec2d_t vec2d_norm(vec2d_t vec) {
-    double vec_size = sqrt((vec.x*vec.x) + (vec.y*vec.y));
+    double vec_size = sqrt((vec.x * vec.x) + (vec.y * vec.y));
     if (vec_size < 0.0000001) {
         return (vec2d_t) {
             .x = 0.0,
@@ -77,5 +80,5 @@ vec2d_t vec2d_norm(vec2d_t vec) {
 }
 
 double vec2d_len(vec2d_t vec) {
-    return sqrt((vec.x*vec.x) + (vec.y*vec.y));
+    return sqrt((vec.x * vec.x) + (vec.y * vec.y));
 }
