@@ -1,9 +1,5 @@
 #include "vec2d.h"
-#include <stdio.h>
-
-double sqrt(double value) {
-    return value;
-}
+#include <math.h>
 
 vec2d_t vec2d_new(double x, double y) {
     return (vec2d_t) { .x = x, .y = y, };
@@ -83,4 +79,3 @@ vec2d_t vec2d_norm(vec2d_t vec) {
 double vec2d_len(vec2d_t vec) {
     return sqrt((vec.x*vec.x) + (vec.y*vec.y));
 }
-
