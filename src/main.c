@@ -1,7 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <inttypes.h>
-#include <math.h>
 
 #include "vec2d.h"
 #include "engine.h"
@@ -44,4 +42,3 @@ int main() {
     engine_run();
     return 0;
 }
-
