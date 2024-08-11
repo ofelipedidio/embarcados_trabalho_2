@@ -26,6 +26,11 @@ typedef enum {
     entity_bullet,
 } entity_type_t;
 
+#define array_of_structs 0
+#if array_of_structs
+
+#define get_prop(i, prop) engine.entities[i].prop
+
 typedef struct {
     entity_type_t type;
 
@@ -54,6 +59,40 @@ typedef struct {
     vec2d_t average_position;
 } engine_t;
 
+#else
+
+#define get_prop(i, prop) engine.entities.prop[i]
+
+typedef struct {
+    entity_type_t type[MAX_COUNT];
+
+    /* Life */
+    int alive[MAX_COUNT];
+    double health[MAX_COUNT];
+    uint64_t time_to_live[MAX_COUNT];
+    uint64_t time_to_reset[MAX_COUNT];
+
+    /* Position and movement */
+    vec2d_t position[MAX_COUNT];
+    vec2d_t direction[MAX_COUNT];
+    double speed[MAX_COUNT];
+
+    /* Size */
+    double radius[MAX_COUNT];
+
+    /* Monster shooting */
+    uint64_t time_to_shoot[MAX_COUNT];
+    uint64_t time_between_shots[MAX_COUNT];
+} entity_t;
+
+typedef struct {
+    entity_t entities;
+    size_t count;
+    vec2d_t average_position;
+} engine_t;
+
+#endif
+
 void engine_init();
 
 void engine_new_monster(vec2d_t pos, vec2d_t direction, double speed, uint64_t time_between_shots);
@@ -63,12 +102,5 @@ void engine_new_bullet(vec2d_t pos, vec2d_t direction);
 void engine_remove(size_t i);
 
 void engine_run();
-
-#define array_of_structs 1
-#if array_of_structs
-#define get_prop(i, prop) engine.entities[i].prop
-#else
-#define get_prop(i, prop) engine.entities.prop[i]
-#endif
 
 #endif // ENGINE

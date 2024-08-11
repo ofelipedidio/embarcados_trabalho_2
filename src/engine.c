@@ -14,32 +14,32 @@ void engine_init() {
 }
 
 void engine_new_monster(vec2d_t pos, vec2d_t direction, double speed, uint64_t time_between_shots) {
-    engine.entities[engine.count].type = entity_monster;
-    engine.entities[engine.count].alive = 1;
-    engine.entities[engine.count].health = MONSTER_HEALTH;
-    engine.entities[engine.count].time_to_live = 0;
-    engine.entities[engine.count].time_to_reset = 0;
-    engine.entities[engine.count].position = pos;
-    engine.entities[engine.count].direction = direction;
-    engine.entities[engine.count].speed = speed;
-    engine.entities[engine.count].radius = MONSTER_RADIUS;
-    engine.entities[engine.count].time_to_shoot = time_between_shots;
-    engine.entities[engine.count].time_between_shots = time_between_shots;
+    get_prop(engine.count, type) = entity_monster;
+    get_prop(engine.count, alive) = 1;
+    get_prop(engine.count, health) = MONSTER_HEALTH;
+    get_prop(engine.count, time_to_live) = 0;
+    get_prop(engine.count, time_to_reset) = 0;
+    get_prop(engine.count, position) = pos;
+    get_prop(engine.count, direction) = direction;
+    get_prop(engine.count, speed) = speed;
+    get_prop(engine.count, radius) = MONSTER_RADIUS;
+    get_prop(engine.count, time_to_shoot) = time_between_shots;
+    get_prop(engine.count, time_between_shots) = time_between_shots;
     engine.count++;
 }
 
 void engine_new_bullet(vec2d_t pos, vec2d_t direction) {
-    engine.entities[engine.count].type = entity_bullet;
-    engine.entities[engine.count].alive = 1;
-    engine.entities[engine.count].health = 0;
-    engine.entities[engine.count].time_to_live = BULLET_LIFE;
-    engine.entities[engine.count].time_to_reset = 0;
-    engine.entities[engine.count].position = pos;
-    engine.entities[engine.count].direction = direction;
-    engine.entities[engine.count].speed = BULLET_SPEED;
-    engine.entities[engine.count].radius = BULLET_RADIUS;
-    engine.entities[engine.count].time_to_shoot = 0;
-    engine.entities[engine.count].time_between_shots = 0;
+    get_prop(engine.count, type) = entity_bullet;
+    get_prop(engine.count, alive) = 1;
+    get_prop(engine.count, health) = 0;
+    get_prop(engine.count, time_to_live) = BULLET_LIFE;
+    get_prop(engine.count, time_to_reset) = 0;
+    get_prop(engine.count, position) = pos;
+    get_prop(engine.count, direction) = direction;
+    get_prop(engine.count, speed) = BULLET_SPEED;
+    get_prop(engine.count, radius) = BULLET_RADIUS;
+    get_prop(engine.count, time_to_shoot) = 0;
+    get_prop(engine.count, time_between_shots) = 0;
     engine.count++;
 }
 
@@ -48,7 +48,17 @@ void engine_remove(size_t i) {
         return;
     }
     engine.count--;
-    engine.entities[i] = engine.entities[engine.count];
+    get_prop(i, type) = get_prop(engine.count, type);
+    get_prop(i, alive) = get_prop(engine.count, alive);
+    get_prop(i, health) = get_prop(engine.count, health);
+    get_prop(i, time_to_live) = get_prop(engine.count, time_to_live);
+    get_prop(i, time_to_reset) = get_prop(engine.count, time_to_reset);
+    get_prop(i, position) = get_prop(engine.count, position);
+    get_prop(i, direction) = get_prop(engine.count, direction);
+    get_prop(i, speed) = get_prop(engine.count, speed);
+    get_prop(i, radius) = get_prop(engine.count, radius);
+    get_prop(i, time_to_shoot) = get_prop(engine.count, time_to_shoot);
+    get_prop(i, time_between_shots) = get_prop(engine.count, time_between_shots);
 }
 
 void handle_movement() {
