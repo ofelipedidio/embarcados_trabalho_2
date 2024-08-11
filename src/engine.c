@@ -10,55 +10,56 @@
 engine_t engine;
 
 void engine_init() {
-    engine.count = 0;
+    engine.alive_monsters.count = 0;
+    engine.dead_monsters.count = 0;
+    engine.bullets.count = 0;
 }
 
 void engine_new_monster(vec2d_t pos, vec2d_t direction, double speed, uint64_t time_between_shots) {
-    get_prop(engine.count, type) = entity_monster;
-    get_prop(engine.count, alive) = 1;
-    get_prop(engine.count, health) = MONSTER_HEALTH;
-    get_prop(engine.count, time_to_live) = 0;
-    get_prop(engine.count, time_to_reset) = 0;
-    get_prop(engine.count, position) = pos;
-    get_prop(engine.count, direction) = direction;
-    get_prop(engine.count, speed) = speed;
-    get_prop(engine.count, radius) = MONSTER_RADIUS;
-    get_prop(engine.count, time_to_shoot) = time_between_shots;
-    get_prop(engine.count, time_between_shots) = time_between_shots;
-    engine.count++;
+    get_prop_m(engine.alive_monsters.count, pos) = pos;
+    get_prop_m(engine.alive_monsters.count, direction) = direction;
+    get_prop_m(engine.alive_monsters.count, speed) = speed;
+    get_prop_m(engine.alive_monsters.count, time_between_shots) = time_between_shots;
+    get_prop_m(engine.alive_monsters.count, time_to_shoot) = time_between_shots;
+    get_prop_m(engine.alive_monsters.count, health) = MONSTER_HEALTH;
+    engine.alive_monsters.count++;
 }
 
 void engine_new_bullet(vec2d_t pos, vec2d_t direction) {
-    get_prop(engine.count, type) = entity_bullet;
-    get_prop(engine.count, alive) = 1;
-    get_prop(engine.count, health) = 0;
-    get_prop(engine.count, time_to_live) = BULLET_LIFE;
-    get_prop(engine.count, time_to_reset) = 0;
-    get_prop(engine.count, position) = pos;
-    get_prop(engine.count, direction) = direction;
-    get_prop(engine.count, speed) = BULLET_SPEED;
-    get_prop(engine.count, radius) = BULLET_RADIUS;
-    get_prop(engine.count, time_to_shoot) = 0;
-    get_prop(engine.count, time_between_shots) = 0;
-    engine.count++;
+    get_prop_b(engine.bullets.count, time_to_live) = BULLET_LIFE;
+    get_prop_b(engine.bullets.count, pos) = pos;
+    get_prop_b(engine.bullets.count, direction) = direction;
+    engine.bullets.count++;
 }
 
-void engine_remove(size_t i) {
-    if (i >= engine.count) {
-        return;
-    }
-    engine.count--;
-    get_prop(i, type) = get_prop(engine.count, type);
-    get_prop(i, alive) = get_prop(engine.count, alive);
-    get_prop(i, health) = get_prop(engine.count, health);
-    get_prop(i, time_to_live) = get_prop(engine.count, time_to_live);
-    get_prop(i, time_to_reset) = get_prop(engine.count, time_to_reset);
-    get_prop(i, position) = get_prop(engine.count, position);
-    get_prop(i, direction) = get_prop(engine.count, direction);
-    get_prop(i, speed) = get_prop(engine.count, speed);
-    get_prop(i, radius) = get_prop(engine.count, radius);
-    get_prop(i, time_to_shoot) = get_prop(engine.count, time_to_shoot);
-    get_prop(i, time_between_shots) = get_prop(engine.count, time_between_shots);
+void engine_monster_die(size_t i) {
+    get_prop_d(engine.dead_monsters.count, pos) = get_prop_m(i, pos);
+    get_prop_d(engine.dead_monsters.count, direction) = get_prop_m(i, direction);
+    get_prop_d(engine.dead_monsters.count, speed) = get_prop_m(i, speed);
+    get_prop_d(engine.dead_monsters.count, time_between_shots) = get_prop_m(i, time_between_shots);
+    get_prop_d(engine.dead_monsters.count, time_to_reset) = MONSTER_RESET_TIME;
+    engine.dead_monsters.count++;
+    // TODO - Felipe: removed do alive
+}
+
+void engine_monster_undie(size_t i) {
+    get_prop_m(engine.alive_monsters.count, pos) = get_prop_d(i, pos);
+    get_prop_m(engine.alive_monsters.count, direction) = get_prop_d(i, direction);
+    get_prop_m(engine.alive_monsters.count, speed) = get_prop_d(i, speed);
+    get_prop_m(engine.alive_monsters.count, time_between_shots) = get_prop_d(i, time_between_shots);
+    get_prop_m(engine.alive_monsters.count, time_to_shoot) = get_prop_d(i, time_between_shots);
+    get_prop_m(engine.alive_monsters.count, health) = MONSTER_HEALTH;
+    engine.alive_monsters.count++;
+    engine.dead_monsters.count--;
+    get_prop_d(engine.dead_monsters.count, pos) = get_prop_d(i, pos);
+    get_prop_d(engine.dead_monsters.count, direction) = get_prop_d(i, direction);
+    get_prop_d(engine.dead_monsters.count, speed) = get_prop_d(i, speed);
+    get_prop_d(engine.dead_monsters.count, time_between_shots) = get_prop_d(i, time_between_shots);
+    get_prop_d(engine.dead_monsters.count, time_to_reset) = get_prop_d(i, time_to_reset);
+}
+
+void engine_remove_b(size_t i) {
+    // TODO - Felipe: implement
 }
 
 void handle_movement() {

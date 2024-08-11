@@ -12,6 +12,9 @@
 #define START_COUNT 400000
 #define MAX_COUNT 5000000
 
+#define MONSTER_MAX 10000
+#define BULLET_MAX 10000
+
 #define BULLET_RADIUS 2.0
 #define BULLET_LIFE 100
 #define BULLET_SPEED 45.0
@@ -26,72 +29,38 @@ typedef enum {
     entity_bullet,
 } entity_type_t;
 
-#define array_of_structs 0
-#if array_of_structs
-
-#define get_prop(i, prop) engine.entities[i].prop
-
 typedef struct {
-    entity_type_t type;
+    struct {
+        vec2d_t pos[MONSTER_MAX];
+        vec2d_t direction[MONSTER_MAX];
+        double speed[MONSTER_MAX];
+        uint64_t time_between_shots[MONSTER_MAX];
+        uint64_t time_to_shoot[MONSTER_MAX];
+        double health[MONSTER_MAX];
 
-    /* Life */
-    int alive;
-    double health;
-    uint64_t time_to_live;
-    uint64_t time_to_reset;
+        size_t count;
+    } alive_monsters;
+    struct {
+        vec2d_t pos[MONSTER_MAX];
+        vec2d_t direction[MONSTER_MAX];
+        double speed[MONSTER_MAX];
+        uint64_t time_between_shots[MONSTER_MAX];
+        uint64_t time_to_reset[MONSTER_MAX];
 
-    /* Position and movement */
-    vec2d_t position;
-    vec2d_t direction;
-    double speed;
+        size_t count;
+    } dead_monsters;
+    struct {
+        vec2d_t pos[BULLET_MAX];
+        vec2d_t direction[BULLET_MAX];
+        uint64_t time_to_live[BULLET_MAX];
 
-    /* Size */
-    double radius;
-
-    /* Monster shooting */
-    uint64_t time_to_shoot;
-    uint64_t time_between_shots;
-} entity_t;
-
-typedef struct {
-    entity_t entities[MAX_COUNT];
-    size_t count;
-    vec2d_t average_position;
+        size_t count;
+    } bullets;
 } engine_t;
 
-#else
-
-#define get_prop(i, prop) engine.entities.prop[i]
-
-typedef struct {
-    entity_type_t type[MAX_COUNT];
-
-    /* Life */
-    int alive[MAX_COUNT];
-    double health[MAX_COUNT];
-    uint64_t time_to_live[MAX_COUNT];
-    uint64_t time_to_reset[MAX_COUNT];
-
-    /* Position and movement */
-    vec2d_t position[MAX_COUNT];
-    vec2d_t direction[MAX_COUNT];
-    double speed[MAX_COUNT];
-
-    /* Size */
-    double radius[MAX_COUNT];
-
-    /* Monster shooting */
-    uint64_t time_to_shoot[MAX_COUNT];
-    uint64_t time_between_shots[MAX_COUNT];
-} entity_t;
-
-typedef struct {
-    entity_t entities;
-    size_t count;
-    vec2d_t average_position;
-} engine_t;
-
-#endif
+#define get_prop_m(i, prop) engine.alive_monsters.prop[i]
+#define get_prop_d(i, prop) engine.dead_monsters.prop[i]
+#define get_prop_b(i, prop) engine.bullets.prop[i]
 
 void engine_init();
 
