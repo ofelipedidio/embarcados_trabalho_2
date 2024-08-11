@@ -146,7 +146,7 @@ void handle_life() {
 void engine_run() {
     vec2d_t average_pos;
     uint64_t monster_count;
-    for (size_t iter = 0; iter < TEST_CYCLES; iter++) {
+    for (size_t iter = 0; iter <= TEST_CYCLES; iter++) {
         average_pos = vec2d_new(0, 0);
         monster_count = 0;
         for (size_t i = 0; i < engine.count; i++) {
@@ -165,10 +165,9 @@ void engine_run() {
         handle_monster_direction_change(average_pos);
         handle_life();
 
-        if (iter % 100 == 0) {
-            fprintf(stderr, "[%lu] %lu entities\n", iter, engine.count);
+        if (iter % 10 == 0) {
+            fprintf(stderr, "[%lu] %lu entities", iter, engine.count);
 
-            /*
             uint64_t monsters_alive = 0;
             uint64_t monsters_dead = 0;
             uint64_t bullets = 0;
@@ -185,9 +184,7 @@ void engine_run() {
                 }
             }
 
-            fprintf(stderr, "alive: %lu | dead: %lu | bullets: %lu\n", monsters_alive, monsters_dead, bullets);
-            fprintf(stderr, "(%.2f, %.2f)\n", average_pos.x, average_pos.y);
-            */
+            fprintf(stderr, " | alive: %lu | dead: %lu | bullets: %lu\n", monsters_alive, monsters_dead, bullets);
         }
     }
 }

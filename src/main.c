@@ -24,6 +24,7 @@ uint64_t randwithin(uint64_t low, uint64_t high) {
 }
 
 int main() {
+    fprintf(stderr, "%lu\n", sizeof(entity_t));
     fprintf(stderr, "%lu\n", sizeof(engine_t));
     engine_init();
 
