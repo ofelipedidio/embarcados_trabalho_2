@@ -1,3 +1,6 @@
+#ifndef VEC2D
+#define VEC2D
+
 typedef struct {
     double x;
     double y;
@@ -25,3 +28,4 @@ vec2d_t vec2d_norm(vec2d_t vec);
 
 double vec2d_len(vec2d_t vec);
 
+#endif // VEC2D
