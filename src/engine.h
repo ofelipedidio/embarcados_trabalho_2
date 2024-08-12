@@ -8,9 +8,8 @@
 
 #include "vec2d.h"
 
-#define TEST_CYCLES 20000
+#define TEST_CYCLES 200
 #define START_COUNT 400000
-#define MAX_COUNT 5000000
 
 #define MONSTER_MAX 400000
 #define BULLET_MAX 12000000
