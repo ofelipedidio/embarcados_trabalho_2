@@ -8,7 +8,7 @@
 
 #include "vec2d.h"
 
-#define TEST_CYCLES 200
+#include "params.h"
 #define START_COUNT 400000
 #define MAX_COUNT 5000000
 
@@ -43,7 +43,7 @@ typedef struct {
     /* Size */
     double radius;
 
-    /* Monster shooting */
+    /* M"onster shooting */
     uint64_t time_to_shoot;
     uint64_t time_between_shots;
 } entity_t;

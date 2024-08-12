@@ -12,7 +12,7 @@ DEPS := $(OBJECTS:.o=.d)
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $^ -o $(TARGET)
+	$(CC) $(CFLAGS) $^ -o $(TARGET) -lm
 
 -include $(DEPS)
 

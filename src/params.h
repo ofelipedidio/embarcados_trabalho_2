@@ -1,0 +1,1 @@
+#define TEST_CYCLES 1000

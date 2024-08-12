@@ -1,0 +1,7 @@
+	Error opening /sys/class/powercap/intel-rapl/intel-rapl:0/energy_uj!
+	Error opening /sys/class/powercap/intel-rapl/intel-rapl:0/intel-rapl:0:0/energy_uj!
+96
+480000024
+[0] 400000 entities | alive: 400000 | dead: 0 | bullets: 0
+[10] 608907 entities | alive: 400000 | dead: 0 | bullets: 208907
+[20] 1026675 entities | alive: 400000 | dead: 0 | bullets: 626675
