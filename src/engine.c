@@ -96,25 +96,20 @@ void handle_movement() {
 void handle_bullet_collision() {
     // fprintf(stderr, "handle_bullet_collision()\n");
     /*
-    for (size_t i = 0; i < engine.count; i++) {
-        if (get_prop(i, type) == entity_bullet) {
-            for (size_t j = 0; j < engine.count; j++) {
-                if (get_prop(j, type) == entity_monster && get_prop(j, alive)) {
-                    double distance_to_collide = get_prop(i, radius) + get_prop(j, radius);
-                    double distance = vec2d_len(vec2d_sub(get_prop(i, position), get_prop(j, position)));
-                    if (distance <= distance_to_collide) {
-                        get_prop(j, health) -= BULLET_DAMAGE;
-                        if (get_prop(j, health) <= 0.0) {
-                            get_prop(j, alive) = 0;
-                            get_prop(j, time_to_reset) = MONSTER_RESET_TIME;
-                        }
-                        engine_remove(i);
-                        if (i != 0) {
-                            i--;
-                        }
-                        break;
-                    }
+    for (size_t i = 0; i < engine.bullets.count; i++) {
+        for (size_t j = 0; j < engine.alive_monsters.count; j++) {
+            double distance_to_collide = BULLET_RADIUS + MONSTER_RADIUS;
+            double distance = vec2d_len(vec2d_sub(get_prop_b(i, pos), get_prop_m(j, pos)));
+            if (distance <= distance_to_collide) {
+                get_prop_m(j, health) -= BULLET_DAMAGE;
+                if (get_prop_m(j, health) <= 0.0) {
+                    engine_monster_die(j);
                 }
+                engine_remove_b(i);
+                if (i > 0) {
+                    i--;
+                }
+                break;
             }
         }
     }

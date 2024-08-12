@@ -1,6 +1,6 @@
 CC := gcc
-CFLAGS := -fsanitize=leak,address -g
-# CFLAGS := -O3
+# CFLAGS := -fsanitize=leak,address -g
+CFLAGS := -O3
 SRCDIR := src
 BUILDDIR := build
 BINDIR := bin
