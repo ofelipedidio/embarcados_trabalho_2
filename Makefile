@@ -1,5 +1,5 @@
 CC := gcc
-# CFLAGS := -fsanitize=leak,address -g
+# CFLAGS := -fsanitize=leak,address -g -lm
 CFLAGS := -O3
 SRCDIR := src
 BUILDDIR := build
@@ -12,7 +12,7 @@ DEPS := $(OBJECTS:.o=.d)
 
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $^ -o $(TARGET)
+	$(CC) $(CFLAGS) $^ -o $(TARGET) -lm
 
 -include $(DEPS)
 

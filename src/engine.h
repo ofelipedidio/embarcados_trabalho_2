@@ -8,7 +8,7 @@
 
 #include "vec2d.h"
 
-#define TEST_CYCLES 200
+#define TEST_CYCLES 500
 #define START_COUNT 400000
 #define MAX_COUNT 5000000
 

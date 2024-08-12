@@ -1,5 +1,7 @@
+#include <bits/types/timer_t.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include <time.h>
 
 #include "vec2d.h"
 #include "engine.h"
@@ -22,7 +24,7 @@ uint64_t randwithin(uint64_t low, uint64_t high) {
     return val;
 }
 
-int main() {
+int power_main() {
     fprintf(stderr, "%lu\n", sizeof(entity_t));
     fprintf(stderr, "%lu\n", sizeof(engine_t));
     engine_init();
@@ -40,10 +42,12 @@ int main() {
                 randwithin(3, 25));
     }
 
-    rapl_init();
-    start_rapl_sysfs();
+    clock_t t; 
+    t = clock(); 
     engine_run();
-    end_rapl_sysfs();
+    t = clock() - t; 
+    double time_taken = ((double)t)/CLOCKS_PER_SEC; // in seconds
+    fprintf(stderr, "Event took %.2fs\n", time_taken);
 
     return 0;
 }
