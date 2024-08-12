@@ -12,8 +12,8 @@
 #define START_COUNT 400000
 #define MAX_COUNT 5000000
 
-#define MONSTER_MAX 10000
-#define BULLET_MAX 10000
+#define MONSTER_MAX 400000
+#define BULLET_MAX 1200000
 
 #define BULLET_RADIUS 2.0
 #define BULLET_LIFE 100
@@ -65,10 +65,6 @@ typedef struct {
 void engine_init();
 
 void engine_new_monster(vec2d_t pos, vec2d_t direction, double speed, uint64_t time_between_shots);
-
-void engine_new_bullet(vec2d_t pos, vec2d_t direction);
-
-void engine_remove(size_t i);
 
 void engine_run();
 

@@ -33,47 +33,63 @@ void engine_new_bullet(vec2d_t pos, vec2d_t direction) {
 }
 
 void engine_monster_die(size_t i) {
-    get_prop_d(engine.dead_monsters.count, pos) = get_prop_m(i, pos);
-    get_prop_d(engine.dead_monsters.count, direction) = get_prop_m(i, direction);
-    get_prop_d(engine.dead_monsters.count, speed) = get_prop_m(i, speed);
+    get_prop_d(engine.dead_monsters.count, pos)                = get_prop_m(i, pos);
+    get_prop_d(engine.dead_monsters.count, direction)          = get_prop_m(i, direction);
+    get_prop_d(engine.dead_monsters.count, speed)              = get_prop_m(i, speed);
     get_prop_d(engine.dead_monsters.count, time_between_shots) = get_prop_m(i, time_between_shots);
-    get_prop_d(engine.dead_monsters.count, time_to_reset) = MONSTER_RESET_TIME;
+    get_prop_d(engine.dead_monsters.count, time_to_reset)      = MONSTER_RESET_TIME;
     engine.dead_monsters.count++;
-    // TODO - Felipe: removed do alive
+    engine.alive_monsters.count--;
+    get_prop_m(i, pos)                = get_prop_m(engine.dead_monsters.count, pos);
+    get_prop_m(i, direction)          = get_prop_m(engine.dead_monsters.count, direction);
+    get_prop_m(i, speed)              = get_prop_m(engine.dead_monsters.count, speed);
+    get_prop_m(i, time_between_shots) = get_prop_m(engine.dead_monsters.count, time_between_shots);
+    get_prop_m(i, time_to_shoot)      = get_prop_m(engine.dead_monsters.count, time_to_shoot);
+    get_prop_m(i, health)             = get_prop_m(engine.dead_monsters.count, health);
 }
 
 void engine_monster_undie(size_t i) {
-    get_prop_m(engine.alive_monsters.count, pos) = get_prop_d(i, pos);
-    get_prop_m(engine.alive_monsters.count, direction) = get_prop_d(i, direction);
-    get_prop_m(engine.alive_monsters.count, speed) = get_prop_d(i, speed);
+    get_prop_m(engine.alive_monsters.count, pos)                = get_prop_d(i, pos);
+    get_prop_m(engine.alive_monsters.count, direction)          = get_prop_d(i, direction);
+    get_prop_m(engine.alive_monsters.count, speed)              = get_prop_d(i, speed);
     get_prop_m(engine.alive_monsters.count, time_between_shots) = get_prop_d(i, time_between_shots);
-    get_prop_m(engine.alive_monsters.count, time_to_shoot) = get_prop_d(i, time_between_shots);
-    get_prop_m(engine.alive_monsters.count, health) = MONSTER_HEALTH;
+    get_prop_m(engine.alive_monsters.count, time_to_shoot)      = get_prop_d(i, time_between_shots);
+    get_prop_m(engine.alive_monsters.count, health)             = MONSTER_HEALTH;
     engine.alive_monsters.count++;
     engine.dead_monsters.count--;
-    get_prop_d(engine.dead_monsters.count, pos) = get_prop_d(i, pos);
-    get_prop_d(engine.dead_monsters.count, direction) = get_prop_d(i, direction);
-    get_prop_d(engine.dead_monsters.count, speed) = get_prop_d(i, speed);
-    get_prop_d(engine.dead_monsters.count, time_between_shots) = get_prop_d(i, time_between_shots);
-    get_prop_d(engine.dead_monsters.count, time_to_reset) = get_prop_d(i, time_to_reset);
+    get_prop_d(i, pos)                = get_prop_d(engine.dead_monsters.count, pos);
+    get_prop_d(i, direction)          = get_prop_d(engine.dead_monsters.count, direction);
+    get_prop_d(i, speed)              = get_prop_d(engine.dead_monsters.count, speed);
+    get_prop_d(i, time_between_shots) = get_prop_d(engine.dead_monsters.count, time_between_shots);
+    get_prop_d(i, time_to_reset)      = get_prop_d(engine.dead_monsters.count, time_to_reset);
 }
 
 void engine_remove_b(size_t i) {
-    // TODO - Felipe: implement
+    engine.bullets.count--;
+    get_prop_b(i, pos)          = get_prop_b(engine.bullets.count, pos);
+    get_prop_b(i, direction)    = get_prop_b(engine.bullets.count, direction);
+    get_prop_b(i, time_to_live) = get_prop_b(engine.bullets.count, time_to_live);
 }
 
 void handle_movement() {
     // fprintf(stderr, "handle_movement()\n");
-    for (size_t i = 0; i < engine.count; i++) {
-        if (get_prop(i, type) == entity_monster && !get_prop(i, alive)) {
-            continue;
-        }
+
+    for (size_t i = 0; i < engine.alive_monsters.count; i++) {
         vec2d_t next_point = vec2d_add(
-                get_prop(i, position), 
+                get_prop_m(i, pos), 
                 vec2d_mul_scl(
-                    get_prop(i, direction),
-                    get_prop(i, speed)));
-        get_prop(i, position) = next_point;
+                    get_prop_m(i, direction),
+                    get_prop_m(i, speed)));
+        get_prop_m(i, pos) = next_point;
+    }
+
+    for (size_t i = 0; i < engine.bullets.count; i++) {
+        vec2d_t next_point = vec2d_add(
+                get_prop_b(i, pos), 
+                vec2d_mul_scl(
+                    get_prop_b(i, direction),
+                    BULLET_SPEED));
+        get_prop_b(i, pos) = next_point;
     }
 }
 
@@ -107,52 +123,50 @@ void handle_bullet_collision() {
 
 void handle_shooting() {
     // fprintf(stderr, "handle_shooting()\n");
-    for (size_t i = 0; i < engine.count; i++) {
-        if (get_prop(i, type) == entity_monster && get_prop(i, alive)) {
-            if (get_prop(i, time_to_shoot) == 0) {
-                get_prop(i, time_to_shoot) = get_prop(i, time_between_shots);
-                engine_new_bullet(get_prop(i, position), get_prop(i, direction));
-            }
-            get_prop(i, time_to_shoot)--;
+    for (size_t i = 0; i < engine.alive_monsters.count; i++) {
+        if (get_prop_m(i, time_to_shoot) == 0) {
+            get_prop_m(i, time_to_shoot) = get_prop_m(i, time_between_shots);
+            engine_new_bullet(get_prop_m(i, pos), get_prop_m(i, direction));
         }
+        get_prop_m(i, time_to_shoot)--;
     }
 }
 
 void handle_monster_direction_change(vec2d_t average_pos) {
     // fprintf(stderr, "handle_monster_direction_change()\n");
-    for (size_t i = 0; i < engine.count; i++) {
-        if (get_prop(i, type) == entity_monster && get_prop(i, alive)) {
+    for (size_t i = 0; i < engine.alive_monsters.count; i++) {
             vec2d_t next_point = vec2d_add(
-                    get_prop(i, position), 
+                    get_prop_m(i, pos), 
                     vec2d_mul_scl(
-                        get_prop(i, direction),
-                        get_prop(i, speed)));
+                        get_prop_m(i, direction),
+                        get_prop_m(i, speed)));
             vec2d_t next_direction = vec2d_norm(vec2d_add(
                     vec2d_mul_scl(average_pos, 0.05),
                     vec2d_mul_scl(next_point, 0.95)));
-            get_prop(i, direction) = next_direction;
-        }
+            get_prop_m(i, direction) = next_direction;
     }
 }
 
 void handle_life() {
     // fprintf(stderr, "handle_life()\n");
-    for (size_t i = 0; i < engine.count; i++) {
-        if (get_prop(i, type) == entity_monster && !get_prop(i, alive)) {
-            if (get_prop(i, time_to_reset) == 0) {
-                get_prop(i, alive) = 1;
+    for (size_t i = 0; i < engine.dead_monsters.count; i++) {
+        if (get_prop_d(i, time_to_reset) == 0) {
+            engine_monster_undie(i);
+            if (i > 0) {
+                i--;
             }
-            get_prop(i, time_to_reset)--;
+        } else {
+            get_prop_d(i, time_to_reset)--;
         }
-        if (get_prop(i, type) == entity_bullet) {
-            if (get_prop(i, time_to_live) == 0) {
-                engine_remove(i);
-                if (i != 0) {
-                    i--;
-                }
+    }
+    for (size_t i = 0; i < engine.bullets.count; i++) {
+        if (get_prop_b(i, time_to_live) == 0) {
+            engine_remove_b(i);
+            if (i > 0) {
+                i--;
             }
-            get_prop(i, time_to_live)--;
         }
+        get_prop_b(i, time_to_live)--;
     }
 }
 
@@ -161,12 +175,9 @@ void engine_run() {
     uint64_t monster_count;
     for (size_t iter = 0; iter <= TEST_CYCLES; iter++) {
         average_pos = vec2d_new(0, 0);
-        monster_count = 0;
-        for (size_t i = 0; i < engine.count; i++) {
-            if (get_prop(i, type) == entity_monster && get_prop(i, alive)) {
-                average_pos = vec2d_add(average_pos, get_prop(i, position));
-                monster_count++;
-            }
+        monster_count = engine.alive_monsters.count;
+        for (size_t i = 0; i < engine.alive_monsters.count; i++) {
+            average_pos = vec2d_add(average_pos, get_prop_m(i, pos));
         }
         if (monster_count > 0) {
             average_pos = vec2d_div_scl(average_pos, (double) monster_count);
@@ -179,25 +190,12 @@ void engine_run() {
         handle_life();
 
         if (iter % 10 == 0) {
-            fprintf(stderr, "[%lu] %lu entities", iter, engine.count);
+            uint64_t monsters_alive = engine.alive_monsters.count;
+            uint64_t monsters_dead = engine.dead_monsters.count;
+            uint64_t bullets = engine.bullets.count;
+            uint64_t total = monsters_alive + monsters_alive + bullets;
 
-            uint64_t monsters_alive = 0;
-            uint64_t monsters_dead = 0;
-            uint64_t bullets = 0;
-            for (size_t i = 0; i < engine.count; i++) {
-                if (get_prop(i, type) == entity_monster) {
-                    if (get_prop(i, alive)) {
-                        monsters_alive++;
-                    } else {
-                        monsters_dead++;
-                    }
-                }
-                if (get_prop(i, type) == entity_bullet) {
-                    bullets++;
-                }
-            }
-
-            fprintf(stderr, " | alive: %lu | dead: %lu | bullets: %lu\n", monsters_alive, monsters_dead, bullets);
+            fprintf(stderr, "[%lu] %lu entities | alive: %lu | dead: %lu | bullets: %lu\n", iter, total, monsters_alive, monsters_dead, bullets);
         }
     }
 }
