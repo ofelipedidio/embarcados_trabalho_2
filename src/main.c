@@ -3,6 +3,7 @@
 
 #include "vec2d.h"
 #include "engine.h"
+#include "energia.h"
 
 uint64_t state = 0xa6ea0366;
 
@@ -39,6 +40,10 @@ int main() {
                 randwithin(3, 25));
     }
 
+    rapl_init();
+    start_rapl_sysfs();
     engine_run();
+    end_rapl_sysfs();
+
     return 0;
 }
